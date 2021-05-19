@@ -106,15 +106,13 @@ jobs:
       - name: 'Prepare file system'
         run: ./config/Shared/ci/ga/prepare_file_system.sh
       - name: 'Configure acceptance env'
-        run: export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && config/Shared/ci/ga/acceptance_env.sh
-        env:
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: config/Shared/ci/ga/acceptance_env.sh
       - name: 'Install project'
         run: vendor/bin/install DE -r ci
       - name: 'Run phantomjs'
         run: timeout 45m bash -c "vendor/bin/phantomjs --webdriver=4444 --disk-cache=true --load-images=false --webdriver-logfile=/tmp/phantomjs.log --webdriver-loglevel=DEBUG">/dev/null &
       - name: 'Run tests'
-        run: vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter || cat /home/runner/work/b2c-demo-shop/b2c-demo-shop/tests/PyzTest/Yves/Newsletter/_output/PyzTest.Yves.Newsletter.Presentation.NewsletterSubscriptionCest.iCanSubscribeWithAnUnsubscribedEmail.fail.html
+        run: DB_PASSWORD=${{ secrets.DB_PASSWORD }} vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter || cat /home/runner/work/b2c-demo-shop/b2c-demo-shop/tests/PyzTest/Yves/Newsletter/_output/PyzTest.Yves.Newsletter.Presentation.NewsletterSubscriptionCest.iCanSubscribeWithAnUnsubscribedEmail.fail.html
 
   without-acceptance-7-4:
     name: 'Without acceptance tests / PostgreSQL / PHP 7.4'
@@ -187,6 +185,8 @@ jobs:
           php-version: '7.2'
           extensions: redis
           ini-values: memory_limit=-1
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       - uses: getong/mariadb-action@v1.1
         with:
           character set server: 'utf8'
@@ -209,9 +209,7 @@ jobs:
       - name: 'Install project'
         run: vendor/bin/install DE -r ci
       - name: 'Configure acceptance env'
-        run: export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && config/Shared/ci/ga/acceptance_env.sh
-        env:
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: config/Shared/ci/ga/acceptance_env.sh
       - name: 'Run phantomjs'
         run: timeout 45m bash -c "vendor/bin/phantomjs --webdriver=4444 --disk-cache=true --load-images=false --webdriver-logfile=/tmp/phantomjs.log --webdriver-loglevel=DEBUG">/dev/null &
       - name: 'Run tests'
