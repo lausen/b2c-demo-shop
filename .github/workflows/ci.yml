@@ -17,7 +17,7 @@ env:
   POSTGRES_PORT: 5433
   POSTGRES_USER: postgres
   POSTGRES_DB: DE_test_zed
-  DB_PASSWORD: ${{ sercets.DB_PASSWORD }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
   MYSQL_USER: root
   MYSQL_DATABASE: DE_test_zed
 
@@ -42,11 +42,10 @@ jobs:
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
           stack-version: 6.8.0
-      - name: 'echo $DB_PASSSWORD'
-        run: echo $DB_PASSSWORD
-      - run: echo $DB_PASSSWORD
-      - name: 'echo ${{ sercets.DB_PASSWORD }}'
-        run: echo ${{ sercets.DB_PASSWORD }}
+      - name: 'echo DB_PASSWORD'
+        run: echo DB_PASSWORD
+      - name: 'echo ${{ secrets.DB_PASSWORD }}'
+        run: echo ${{ secrets.DB_PASSWORD }}
       - name: 'Prepare code base'
         run: ./config/Shared/ci/ga/prepare_for_validation.sh
       - name: 'Test'
@@ -67,7 +66,7 @@ jobs:
       postgres:
         image: postgres:12
         env:
-          POSTGRES_PASSWORD: ${{ sercets.DB_PASSWORD }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
         ports:
@@ -120,7 +119,7 @@ jobs:
       postgres:
         image: postgres:12
         env:
-          POSTGRES_PASSWORD: ${{ sercets.DB_PASSWORD }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
         ports:
@@ -182,7 +181,7 @@ jobs:
           collation server: 'utf8_general_ci'
           mariadb version: '10.3'
           mysql database: ${{ env.MYSQL_DATABASE }}
-          mysql root password: ${{ sercets.DB_PASSWORD }}
+          mysql root password: ${{ secrets.DB_PASSWORD }}
       - name: Configure sysctl limits
         run: |
           sudo swapoff -a
@@ -231,7 +230,7 @@ jobs:
           collation server: 'utf8_general_ci'
           mariadb version: '10.3'
           mysql database: ${{ env.MYSQL_DATABASE }}
-          mysql root password: ${{ sercets.DB_PASSWORD }}
+          mysql root password: ${{ secrets.DB_PASSWORD }}
       - name: Configure sysctl limits
         run: |
           sudo swapoff -a
