@@ -56,10 +56,6 @@ jobs:
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
           stack-version: 6.8.0
-      - name: 'echo DB_PASSWORD'
-        run: echo $DB_PASSWORD
-      - name: 'echo ${{ secrets.DB_PASSWORD }}'
-        run: echo ${{ secrets.DB_PASSWORD }}
       - name: 'Prepare code base'
         run: ./config/Shared/ci/ga/prepare_for_validation.sh
       - name: 'Test'
@@ -116,7 +112,7 @@ jobs:
       - name: 'Run phantomjs'
         run: timeout 45m bash -c "vendor/bin/phantomjs --webdriver=4444 --disk-cache=true --load-images=false --webdriver-logfile=/tmp/phantomjs.log --webdriver-loglevel=DEBUG">/dev/null &
       - name: 'Run tests'
-        run: vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter || cat /home/runner/work/b2c-demo-shop/b2c-demo-shop/tests/PyzTest/Yves/Customer/_output/PyzTest.Yves.Customer.Presentation.CustomerAddressCest.testICanAddNewAddress.fail.html
+        run: vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter || cat /home/runner/work/b2c-demo-shop/b2c-demo-shop/tests/PyzTest/Yves/Newsletter/_output/PyzTest.Yves.Newsletter.Presentation.NewsletterSubscriptionCest.iCanSubscribeWithAnUnsubscribedEmail.fail.html
 
   without-acceptance-7-4:
     name: 'Without acceptance tests / PostgreSQL / PHP 7.4'
@@ -215,7 +211,7 @@ jobs:
       - name: 'Run phantomjs'
         run: timeout 45m bash -c "vendor/bin/phantomjs --webdriver=4444 --disk-cache=true --load-images=false --webdriver-logfile=/tmp/phantomjs.log --webdriver-loglevel=DEBUG">/dev/null &
       - name: 'Run tests'
-        run: vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter
+        run: vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter || /home/runner/work/b2c-demo-shop/b2c-demo-shop/tests/PyzTest/Yves/Newsletter/_output/PyzTest.Yves.Newsletter.Presentation.NewsletterSubscriptionCest.iCanSubscribeWithAnUnsubscribedEmail.fail.html
 
   without-acceptance-7-2-mariadb:
     name: 'Without acceptance tests / PHP 7.2'
