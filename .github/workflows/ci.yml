@@ -106,7 +106,9 @@ jobs:
       - name: 'Prepare file system'
         run: ./config/Shared/ci/ga/prepare_file_system.sh
       - name: 'Configure acceptance env'
-        run: config/Shared/ci/ga/acceptance_env.sh
+        run: export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && config/Shared/ci/ga/acceptance_env.sh
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       - name: 'Install project'
         run: vendor/bin/install DE -r ci
       - name: 'Run phantomjs'
@@ -207,7 +209,9 @@ jobs:
       - name: 'Install project'
         run: vendor/bin/install DE -r ci
       - name: 'Configure acceptance env'
-        run: config/Shared/ci/ga/acceptance_env.sh
+        run: export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && config/Shared/ci/ga/acceptance_env.sh
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       - name: 'Run phantomjs'
         run: timeout 45m bash -c "vendor/bin/phantomjs --webdriver=4444 --disk-cache=true --load-images=false --webdriver-logfile=/tmp/phantomjs.log --webdriver-loglevel=DEBUG">/dev/null &
       - name: 'Run tests'
