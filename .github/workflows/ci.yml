@@ -25,6 +25,20 @@ jobs:
   validation-7-4:
     name: 'Static analysis / PHP 7.4'
     runs-on: ubuntu-18.04
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       - uses: shivammathur/setup-php@v2
@@ -43,7 +57,7 @@ jobs:
         with:
           stack-version: 6.8.0
       - name: 'echo DB_PASSWORD'
-        run: echo DB_PASSWORD
+        run: echo $DB_PASSWORD
       - name: 'echo ${{ secrets.DB_PASSWORD }}'
         run: echo ${{ secrets.DB_PASSWORD }}
       - name: 'Prepare code base'
@@ -102,7 +116,7 @@ jobs:
       - name: 'Run phantomjs'
         run: timeout 45m bash -c "vendor/bin/phantomjs --webdriver=4444 --disk-cache=true --load-images=false --webdriver-logfile=/tmp/phantomjs.log --webdriver-loglevel=DEBUG">/dev/null &
       - name: 'Run tests'
-        run: vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter
+        run: vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter || cat /home/runner/work/b2c-demo-shop/b2c-demo-shop/tests/PyzTest/Yves/Customer/_output/PyzTest.Yves.Customer.Presentation.CustomerAddressCest.testICanAddNewAddress.fail.html
 
   without-acceptance-7-4:
     name: 'Without acceptance tests / PostgreSQL / PHP 7.4'
