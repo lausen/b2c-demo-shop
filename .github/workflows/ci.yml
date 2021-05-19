@@ -15,10 +15,9 @@ env:
   APPLICATION_STORE: DE
   PROJECT: suite
   POSTGRES_PORT: 5433
-  POSTGRES_PASSWORD: postgres
   POSTGRES_USER: postgres
   POSTGRES_DB: DE_test_zed
-  MYSQL_PASSWORD: secret
+  DB_PASSWORD: ${{ sercets.DB_PASSWORD }}
   MYSQL_USER: root
   MYSQL_DATABASE: DE_test_zed
 
@@ -26,20 +25,6 @@ jobs:
   validation-7-4:
     name: 'Static analysis / PHP 7.4'
     runs-on: ubuntu-18.04
-    services:
-      postgres:
-        image: postgres:12
-        env:
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
-        ports:
-          - 5433:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       - uses: shivammathur/setup-php@v2
@@ -57,6 +42,11 @@ jobs:
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
           stack-version: 6.8.0
+      - name: 'echo $DB_PASSSWORD'
+        run: echo $DB_PASSSWORD
+      - run: echo $DB_PASSSWORD
+      - name: 'echo ${{ sercets.DB_PASSWORD }}'
+        run: echo ${{ sercets.DB_PASSWORD }}
       - name: 'Prepare code base'
         run: ./config/Shared/ci/ga/prepare_for_validation.sh
       - name: 'Test'
@@ -77,58 +67,7 @@ jobs:
       postgres:
         image: postgres:12
         env:
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
-        ports:
-          - 5433:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - uses: actions/checkout@v2
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          extensions: redis
-          ini-values: memory_limit=-1
-      - name: Configure sysctl limits
-        run: |
-          sudo swapoff -a
-          sudo sysctl -w vm.swappiness=1
-          sudo sysctl -w fs.file-max=262144
-          sudo sysctl -w vm.max_map_count=262144
-      - name: Runs Elasticsearch
-        uses: elastic/elastic-github-actions/elasticsearch@master
-        with:
-          stack-version: 6.8.0
-      - name: 'Prepare file system'
-        run: ./config/Shared/ci/ga/prepare_file_system.sh
-      - name: 'Install project'
-        run: vendor/bin/install DE -r ci
-      - name: 'Run phantomjs'
-        run: timeout 45m bash -c "vendor/bin/phantomjs --webdriver=4444 --disk-cache=true --load-images=false --webdriver-logfile=/tmp/phantomjs.log --webdriver-loglevel=DEBUG">/dev/null &
-      - name: 'Run tests'
-        run: vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter
-
-  without-acceptance-7-4:
-    name: 'Without acceptance tests / PostgreSQL / PHP 7.4'
-    runs-on: ubuntu-18.04
-    services:
-      rabbitmq:
-        image: rabbitmq
-        ports:
-          - 5672:5672
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-      postgres:
-        image: postgres:12
-        env:
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_PASSWORD: ${{ sercets.DB_PASSWORD }}
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
         ports:
@@ -159,6 +98,57 @@ jobs:
         run: ./config/Shared/ci/ga/prepare_file_system.sh
       - name: 'Configure acceptance env'
         run: config/Shared/ci/ga/acceptance_env.sh
+      - name: 'Install project'
+        run: vendor/bin/install DE -r ci
+      - name: 'Run phantomjs'
+        run: timeout 45m bash -c "vendor/bin/phantomjs --webdriver=4444 --disk-cache=true --load-images=false --webdriver-logfile=/tmp/phantomjs.log --webdriver-loglevel=DEBUG">/dev/null &
+      - name: 'Run tests'
+        run: vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter
+
+  without-acceptance-7-4:
+    name: 'Without acceptance tests / PostgreSQL / PHP 7.4'
+    runs-on: ubuntu-18.04
+    services:
+      rabbitmq:
+        image: rabbitmq
+        ports:
+          - 5672:5672
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_PASSWORD: ${{ sercets.DB_PASSWORD }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: redis
+          ini-values: memory_limit=-1
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 6.8.0
+      - name: 'Prepare file system'
+        run: ./config/Shared/ci/ga/prepare_file_system.sh
       - name: 'Install project'
         run: vendor/bin/install DE -r ci -x frontend -x fixtures
       - name: 'Run tests'
@@ -192,7 +182,7 @@ jobs:
           collation server: 'utf8_general_ci'
           mariadb version: '10.3'
           mysql database: ${{ env.MYSQL_DATABASE }}
-          mysql root password: ${{ env.MYSQL_PASSWORD }}
+          mysql root password: ${{ sercets.DB_PASSWORD }}
       - name: Configure sysctl limits
         run: |
           sudo swapoff -a
@@ -241,7 +231,7 @@ jobs:
           collation server: 'utf8_general_ci'
           mariadb version: '10.3'
           mysql database: ${{ env.MYSQL_DATABASE }}
-          mysql root password: ${{ env.MYSQL_PASSWORD }}
+          mysql root password: ${{ sercets.DB_PASSWORD }}
       - name: Configure sysctl limits
         run: |
           sudo swapoff -a
