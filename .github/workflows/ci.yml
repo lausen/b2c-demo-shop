@@ -15,10 +15,10 @@ env:
   APPLICATION_STORE: DE
   PROJECT: suite
   POSTGRES_PORT: 5433
-  POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  POSTGRES_PASSWORD: postgres
   POSTGRES_USER: postgres
   POSTGRES_DB: DE_test_zed
-  MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  MYSQL_PASSWORD: secret
   MYSQL_USER: root
   MYSQL_DATABASE: DE_test_zed
 
@@ -111,8 +111,6 @@ jobs:
       - name: 'Run phantomjs'
         run: timeout 45m bash -c "vendor/bin/phantomjs --webdriver=4444 --disk-cache=true --load-images=false --webdriver-logfile=/tmp/phantomjs.log --webdriver-loglevel=DEBUG">/dev/null &
       - name: 'Run tests'
-        env:
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: vendor/bin/codecept run -g EndToEnd -g Presentation -x DockerOnly --ext DotReporter
 
   without-acceptance-7-4:
@@ -259,8 +257,6 @@ jobs:
       - name: 'Install project'
         run: vendor/bin/install DE -r ci -x frontend -x fixtures
       - name: 'Run tests'
-        env:
-          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: vendor/bin/codecept run -x EndToEnd -x Presentation --ext DotReporter
 
   functional-via-docker-alpine-php-7-4-postresql:
