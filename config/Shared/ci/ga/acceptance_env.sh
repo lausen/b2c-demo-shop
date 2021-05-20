@@ -17,7 +17,7 @@ PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION . '.' .  PHP_MINOR_VERSION;")
 # setup php-fpm
 echo "cp config/Shared/ci/ga/www.conf.php7 /etc/php/$PHP_VERSION/fpm/pool.d/www.conf"
 sudo cp config/Shared/ci/ga/www.conf.php7 /etc/php/$PHP_VERSION/fpm/pool.d/www.conf
-echo 'clear_env = no' >> /etc/php/$PHP_VERSION/fpm/pool.d/www.conf
+sudo echo 'clear_env = no' >> /etc/php/$PHP_VERSION/fpm/pool.d/www.conf
 echo "add ini config"
 sudo echo "session.save_path = '/tmp'" >> /etc/php/$PHP_VERSION/cli/php.ini
 sudo echo "cgi.fix_pathinfo = 1" >> /etc/php/$PHP_VERSION/cli/php.ini
