@@ -3,24 +3,6 @@
 namespace Pyz\Zed\Antelope\Persistence;
 
 use Generated\Shared\Transfer\AntelopeTransfer;
-
-interface AntelopeRepositoryInterface
-{
-    /**
-     * @param int $idAntelope
-     *
-     * @return \Generated\Shared\Transfer\AntelopeTransfer|null
-     */
-    public function findAntelopeById(int $idAntelope): ?AntelopeTransfer;
-}
-
-src/Pyz/Zed/Antelope/Persistence/AntelopeRepository.php
-
-<?php
-
-namespace Pyz\Zed\Antelope\Persistence;
-
-use Generated\Shared\Transfer\AntelopeTransfer;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
 
 /**
