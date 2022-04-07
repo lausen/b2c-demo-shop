@@ -11,8 +11,8 @@
     </dashboard>
     <antelope>
         <label>Antelope</label>
-        <title>Antelope</title>
         <uri>/antelope</uri>
+        <title>Antelope</title>
         <icon>fa-globe</icon>
     </antelope>
     <sales>
