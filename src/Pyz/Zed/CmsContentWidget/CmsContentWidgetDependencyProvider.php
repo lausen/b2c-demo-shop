@@ -7,6 +7,7 @@
 
 namespace Pyz\Zed\CmsContentWidget;
 
+use Pyz\Shared\CmsContentWidgetAntelopeConnector\ContentWidgetConfigurationProvider\CmsContentWidgetAntelopeConnectorConfigurationProvider;
 use Spryker\Shared\CmsContentWidgetProductConnector\ContentWidgetConfigurationProvider\CmsProductContentWidgetConfigurationProvider;
 use Spryker\Shared\CmsContentWidgetProductGroupConnector\ContentWidgetConfigurationProvider\CmsProductGroupContentWidgetConfigurationProvider;
 use Spryker\Shared\CmsContentWidgetProductSetConnector\ContentWidgetConfigurationProvider\CmsProductSetContentWidgetConfigurationProvider;
@@ -35,6 +36,7 @@ class CmsContentWidgetDependencyProvider extends SprykerCmsContentWidgetDependen
             CmsProductGroupContentWidgetConfigurationProvider::FUNCTION_NAME => new CmsProductSkuMapperPlugin(),
             ContentBannerConfig::TWIG_FUNCTION_NAME => new CmsContentItemKeyMapperPlugin(),
             ContentProductConfig::TWIG_FUNCTION_NAME => new CmsContentItemKeyMapperPlugin(),
+            CmsContentWidgetAntelopeConnectorConfigurationProvider::FUNCTION_NAME => new CmsContentWidgetAntelopeConnectorConfigurationProvider(),
         ];
     }
 }
