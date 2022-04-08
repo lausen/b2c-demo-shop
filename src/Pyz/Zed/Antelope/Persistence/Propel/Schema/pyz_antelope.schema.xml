@@ -10,7 +10,7 @@
         </unique>
         <id-method-parameter value="pyz_antelope_pk_seq"/>
         <behavior name="event">
-            <parameter name="pyz_antelope_all" column="*"/>
+            <parameter name="pyz_antelope_all" column="*" value=""/>
         </behavior>
     </table>
 
