@@ -35,9 +35,13 @@ class AntelopeTranslationStagePlugin extends AbstractPlugin implements StagePlug
      */
     public function process($payload, WriteStreamInterface $outStream, $originalPayload)
     {
-        return $this->getFactory()
-            ->getProcessFacade()
-            ->translate($payload, $this->getTranslatorConfig());
+        if (is_array($payload)) {
+            return $this->getFactory()
+                ->getProcessFacade()
+                ->translate($payload, $this->getTranslatorConfig());
+        }
+
+        return array();
     }
 
     /**
