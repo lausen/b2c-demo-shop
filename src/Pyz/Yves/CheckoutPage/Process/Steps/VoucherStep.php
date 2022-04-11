@@ -2,6 +2,7 @@
 
 namespace Pyz\Yves\CheckoutPage\Process\Steps;
 
+use Generated\Shared\Transfer\DiscountTransfer;
 use Spryker\Shared\Kernel\Transfer\AbstractTransfer;
 use Spryker\Yves\StepEngine\Dependency\Step\StepWithBreadcrumbInterface;
 use SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCalculationClientInterface;
@@ -58,6 +59,10 @@ class VoucherStep extends AbstractBaseStep implements StepWithBreadcrumbInterfac
      */
     public function execute(Request $request, AbstractTransfer $quoteTransfer)
     {
+        $discountTransfer = new DiscountTransfer();
+        $discountTransfer->setVoucherCode($quoteTransfer->getVoucher());
+        $quoteTransfer->addVoucherDiscount($discountTransfer);
+
         return $this->calculationClient->recalculate($quoteTransfer);
     }
 

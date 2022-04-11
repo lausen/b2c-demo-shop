@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CheckoutController extends SprykerShopCheckoutController
 {
+
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
@@ -17,6 +18,22 @@ class CheckoutController extends SprykerShopCheckoutController
      */
     public function voucherAction(Request $request)
     {
-        return 'Hello Voucher Step';
+        $response = $this->createStepProcess()->process(
+            $request,
+            $this->getFactory()
+                ->createCheckoutFormFactory()
+                ->createVoucherFormCollection()
+        );
+
+        if (!is_array($response)) {
+            return $response;
+        }
+
+        return $this->view(
+                $response,
+                $this->getFactory()->getCustomerPageWidgetPlugins(),
+                '@CheckoutPage/views/voucher/voucher.twig'
+            );
     }
+
 }
